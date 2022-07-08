@@ -18,14 +18,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 import java.util.Optional;
 
-
-
 @Testcontainers
 @DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
 public class PedidoRepositoryTest {
 
   @Autowired
   private PedidoRepository pedidoRepository;
+
+  @Container
+  static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo");
 
   @AfterEach
   void cleanUp() {
@@ -37,7 +38,6 @@ public class PedidoRepositoryTest {
     registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
   }
 
-
   Pedido pedidoMock = new Pedido("61ff1e243dabcd00b6452431", "produto1", 1);
 
   @DisplayName("1 - Deve cadastrar um novo pedido com sucesso.")
@@ -45,37 +45,30 @@ public class PedidoRepositoryTest {
   void DeveCadastrarNovopedido() {
     this.pedidoRepository.insert(pedidoMock);
 
-
     Pedido pedido = pedidoRepository.insert(new Pedido("1", "produto1", 1));
 
     Assertions.assertNotNull(pedido);
   }
-
 
   @DisplayName("2 - Deve listar todos os pedidos com sucesso.")
   @Test
   void DeveListarTodosOspedidos() {
     this.pedidoRepository.findAll();
 
-
     List<Pedido> pedido = pedidoRepository.findAll();
 
     Assertions.assertNotNull(pedido);
   }
-
-
 
   @DisplayName("3 - Deve buscar um pedido pelo id com sucesso.")
   @Test
   void DeveBuscarpedidoPeloId() {
     this.pedidoRepository.findById(pedidoMock.getIdDoPedido());
 
-
     Optional<Pedido> pedido = pedidoRepository.findById("");
 
     Assertions.assertNotNull(pedido);
   }
-
 
   @DisplayName("4 - Deve atualizar um pedido pelo id com sucesso.")
   @Test
@@ -83,22 +76,17 @@ public class PedidoRepositoryTest {
     this.pedidoRepository.findById(pedidoMock.getIdDoPedido());
     this.pedidoRepository.save(pedidoMock);
 
-
     Pedido pedido = pedidoRepository.save(pedidoMock);
 
     Assertions.assertNotNull(pedido);
   }
-
-
 
   @DisplayName("5 - Deve excluir um pedido pelo id com sucesso.")
 
   @Test
   void DeveExcluirpedidoPeloId() {
 
-
     this.pedidoRepository.deleteById(pedidoMock.getIdDoPedido());
-
 
     Optional<Pedido> pedido = pedidoRepository.findById("");
 
@@ -106,5 +94,3 @@ public class PedidoRepositoryTest {
   }
 
 }
-
-
